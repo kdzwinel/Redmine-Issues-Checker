@@ -30,6 +30,8 @@ Developers
 + Base64.js - Base64 encoding/decoding by webtoolkit (used for encoding login data)
 + manifest.json - configuration file used by google chrome webstore
 
++ gfx - graphic files (logo, promotional banners) in xcf format
+
 Author
 ------
 
