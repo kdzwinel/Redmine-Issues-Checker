@@ -1,0 +1,14 @@
+{
+   "background_page": "background.html",
+   "browser_action": {
+      "default_title": "Redmine Issues Checker"
+   },
+   "description": "Keep track of Redmine issues assigned to you.",
+   "icons": {
+      "128": "redmine_logo_128.png"
+   },
+   "name": "Redmine Issues Checker",
+   "options_page": "options.html",
+   "permissions": [ "tabs", "notifications", "<all_urls>" ],
+   "version": "0.50"
+}
