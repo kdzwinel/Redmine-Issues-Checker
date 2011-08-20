@@ -3,8 +3,16 @@ REDMINE ISSUES CHECKER
 
 Highly configurable extension displaying number of active and/or new issues assigned to logged in user. Extension includes optional notifications about new issues.
 
+This extension was inspired by 'Google Mail Checker'.
+
 Usage
 -----
+
+You may install this extension from its google chrome webstore page
+
+https://chrome.google.com/webstore/detail/cmfcfjopbfmekonldgghddhkphapbpek
+
+or download it and manually load as an 'Unpacked extension' via chrome extensions page.
 
 To start working with this extension (after installation) go to the options page and enter your Redmine URL. You have to be logged in to Redmine for this extension to work or you have to provide your login credentials on the options page.
 
@@ -14,8 +22,6 @@ Bug Tracker
 Have a bug? Please create an issue here on GitHub!
 
 https://github.com/kdzwinel/Redmine-Issues-Checker/issues
-
-This extension was inspired by `Google Mail Checker`.
 
 Developers
 ----------
