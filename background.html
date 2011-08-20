@@ -197,14 +197,13 @@ function showNotificationOnNewIssue(issuesObj) {
 			//issue.created_on
 			//issue.updated_on
 
-			//@todo switching type of notification
 			if(!localStorage.notificationsType || localStorage.notificationsType == 'standard') {
 				var notification = webkitNotifications.createNotification(
 					'redmine_logo_128.png',  // icon url - can be relative
 					'"' + issue.subject + '" by ' + issue.author.name,  // notification title
 					issue.description  // notification body text
 				);
-			} else {//extended
+			} else {//extended notification
 				var notification = webkitNotifications.createHTMLNotification(
 					'notification.html'
 				);
@@ -348,6 +347,7 @@ function showLoggedOut() {
 	chrome.browserAction.setIcon({path:"redmine_not_logged_in.png"});
 	chrome.browserAction.setBadgeBackgroundColor({color:[190, 190, 190, 230]});
 	chrome.browserAction.setBadgeText({text:"?"});
+	chrome.browserAction.setTitle({'title':'disconnected'});
 }
 
 /*******************
