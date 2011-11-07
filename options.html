@@ -50,6 +50,12 @@ body {
 #redmine-url{
 	width: 250px;
 }
+
+#social-buttons {
+	position: absolute;
+	right: 4px;
+	top: 8px;
+}
 </style>
 </head>
 <body>
@@ -114,6 +120,18 @@ body {
 	<button id="save-button" style="font-weight:bold" onclick="save()">Save</button>
 	<button onclick="init()">Cancel</button>
 </div>
+
+<div id="social-buttons">
+	<g:plusone size="medium" href="https://chrome.google.com/webstore/detail/cmfcfjopbfmekonldgghddhkphapbpek"></g:plusone>
+	<br />
+	<a href="https://twitter.com/share" class="twitter-share-button" data-url="https://chrome.google.com/webstore/detail/cmfcfjopbfmekonldgghddhkphapbpek" data-text="Redmine Issues Checker" data-count="horizontal">Tweet</a>
+	<br />
+	<iframe src="http://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fchrome.google.com%2Fwebstore%2Fdetail%2Fcmfcfjopbfmekonldgghddhkphapbpek&amp;send=false&amp;layout=button_count&amp;width=50&amp;show_faces=false&amp;action=recommend&amp;colorscheme=light&amp;font&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:90px; height:21px;" allowTransparency="true"></iframe>
+	<br />
+</div>
+
+<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+<script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
 
 <script>
 var redmineUrlTextbox, showActiveIssues, showNewIssues, showActiveNewIssues, iconPressUrl, iconPressDontRedirect;
