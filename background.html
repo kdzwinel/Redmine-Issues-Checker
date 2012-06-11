@@ -52,6 +52,14 @@ function getRedmineUrl() {
 	return localStorage.redmineUrl;
 }
 
+function getRedmineUpdateUrl() {
+	if( !localStorage.redmineUpdateUrl ) {
+		return null;
+	}
+
+	return localStorage.redmineUpdateUrl;
+}
+
 function isRedmineUrl(url) {
 	var redmine = getRedmineUrl();
 
@@ -167,7 +175,13 @@ function getCurrentUser(onSuccess, onError) {
 }
 
 function getIssuesCount(onSuccess, onError) {
-	getJSON("issues.json?assigned_to_id=" + currentUserId + "&limit=50",
+	var jsonRequestUrl = "";
+	if(getRedmineUpdateUrl() != null) {
+		jsonRequestUrl = getRedmineUpdateUrl();
+	} else {
+		jsonRequestUrl = "issues.json?assigned_to_id=" + currentUserId + "&limit=50";
+	}
+	getJSON(jsonRequestUrl,
 		function(json){
 			if(json.issues != undefined && localStorage.showNotifications == '1') {
 				showNotificationOnNewIssue(json.issues);
