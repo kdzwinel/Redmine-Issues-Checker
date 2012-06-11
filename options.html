@@ -76,6 +76,10 @@ body {
 <div class="section-header first">Update delay</div>
 <p>Update delay (sec): <input type="text" id="update-delay-min" oninput="markDirty()">, max: <input type="text" id="update-delay-max" oninput="markDirty()"></p>
 
+<div class="section-header first">Update request URL</div>
+<p>Enter your redmine update url (live empty for receiving your personal tasks):</p>
+<p><input type="text" id="redmine-update-url" oninput="markDirty()"> <em>(eg "issues.json?query_id=6")</em></p>
+
 <div class="section-header first">Issues</div>
 <p>Show number of issues:</p>
 <ul>
@@ -137,7 +141,7 @@ body {
 <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
 
 <script>
-var redmineUrlTextbox, showActiveIssues, showNewIssues, showActiveNewIssues, iconPressUrl, iconPressDontRedirect;
+var redmineUrlTextbox, redmineUpdateUrlTextbox, showActiveIssues, showNewIssues, showActiveNewIssues, iconPressUrl, iconPressDontRedirect;
 var userLogin, userPassword;
 var showNotifications, notificationsType, notificationsTimeout, notificationFieldsDiv, notificationFields, notificationColors;
 var saveButton;
@@ -146,6 +150,7 @@ init();
 
 function init() {
 	redmineUrlTextbox = document.getElementById("redmine-url");
+	redmineUpdateUrlTextbox = document.getElementById("redmine-update-url");
 
 	updateDelayMinSec = document.getElementById("update-delay-min");
 	updateDelayMaxSec = document.getElementById("update-delay-max");
@@ -198,6 +203,7 @@ function init() {
 function loadDefaults()
 {
 	redmineUrlTextbox.value = localStorage.redmineUrl || "";
+	redmineUpdateUrlTextbox.value = localStorage.redmineUpdateUrl || "";
 	updateDelayMinSec.value = localStorage.updateDelayMinMS / 1000 || 60;
 	updateDelayMaxSec.value = localStorage.updateDelayMaxMS / 1000 || 60 * 60;
 
@@ -275,6 +281,7 @@ function toggleNotificationFields() {
 
 function save() {
 	var newUrl = redmineUrlTextbox.value;
+	var updateUrl = redmineUpdateUrlTextbox.value;
 
 	if( !isUrl(newUrl) ) {
 		loadDefaults();
@@ -348,6 +355,7 @@ function save() {
 	localStorage.updateDelayMaxMS = parseInt(updateDelayMaxSec.value) * 1000;
 
 	localStorage.redmineUrl = newUrl;
+	localStorage.redmineUpdateUrl = updateUrl;
 	markClean();
 
 	chrome.extension.getBackgroundPage().init();
