@@ -73,6 +73,9 @@ body {
 <p>Password:</p>
 <p><input type="password" id="user-password" oninput="markDirty()"></p>
 
+<div class="section-header first">Update delay</div>
+<p>Update delay (sec): <input type="text" id="update-delay-min" oninput="markDirty()">, max: <input type="text" id="update-delay-max" oninput="markDirty()"></p>
+
 <div class="section-header first">Issues</div>
 <p>Show number of issues:</p>
 <ul>
@@ -144,6 +147,9 @@ init();
 function init() {
 	redmineUrlTextbox = document.getElementById("redmine-url");
 
+	updateDelayMinSec = document.getElementById("update-delay-min");
+	updateDelayMaxSec = document.getElementById("update-delay-max");
+	
 	showActiveIssues = document.getElementById("issues-active");
 	showNewIssues = document.getElementById("issues-new");
 	showActiveNewIssues = document.getElementById("issues-active-new");
@@ -192,6 +198,8 @@ function init() {
 function loadDefaults()
 {
 	redmineUrlTextbox.value = localStorage.redmineUrl || "";
+	updateDelayMinSec.value = localStorage.updateDelayMinMS / 1000 || 60;
+	updateDelayMaxSec.value = localStorage.updateDelayMaxMS / 1000 || 60 * 60;
 
 	showActiveIssues.checked = false;
 	showNewIssues.checked = false;
@@ -336,6 +344,8 @@ function save() {
 	}
 
 	localStorage.notificationsTimeout = newTimeout;
+	localStorage.updateDelayMinMS = parseInt(updateDelayMinSec.value) * 1000;
+	localStorage.updateDelayMaxMS = parseInt(updateDelayMaxSec.value) * 1000;
 
 	localStorage.redmineUrl = newUrl;
 	markClean();
