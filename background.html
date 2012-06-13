@@ -12,8 +12,8 @@ var rotation = 0;
 var loadingAnimation = new LoadingAnimation();
 
 //REQUEST VARIABLES
-var pollIntervalMin = 1000 * 60;  // 1 minute
-var pollIntervalMax = 1000 * 60 * 60;  // 1 hour
+var DEFAULT_POLL_INTERVAL_MIN_MS = 1000 * 60;  // 1 minute
+var DEFAULT_POLL_INTERVAL_MAX_MS = 1000 * 60 * 60;  // 1 hour
 var requestFailureCount = 0;  // used for exponential backoff
 var requestTimeout = 1000 * 5;  // 5 seconds
 var requestTimeoutHandler = null;
@@ -44,12 +44,36 @@ function init() {
 	startRequest();
 }
 
+function getUpdateDelayMinMS() {
+	if( !localStorage.updateDelayMinMS ) {
+		return DEFAULT_POLL_INTERVAL_MIN_MS;
+	}
+
+	return localStorage.updateDelayMinMS;
+}
+
+function getUpdateDelayMaxMS() {
+	if( !localStorage.updateDelayMaxMS ) {
+		return DEFAULT_POLL_INTERVAL_MAX_MS;
+	}
+
+	return localStorage.updateDelayMaxMS;
+}
+
 function getRedmineUrl() {
 	if( !localStorage.redmineUrl ) {
 		return null;
 	}
 
 	return localStorage.redmineUrl;
+}
+
+function getRedmineUpdateUrl() {
+	if( !localStorage.redmineUpdateUrl ) {
+		return null;
+	}
+
+	return localStorage.redmineUpdateUrl;
 }
 
 function isRedmineUrl(url) {
@@ -103,6 +127,8 @@ function goToRedmine() {
 function scheduleRequest() {
 	var randomness = Math.random() + 1;
 	var exponent = Math.pow(2, requestFailureCount);
+	var pollIntervalMin = getUpdateDelayMinMS();
+	var pollIntervalMax = getUpdateDelayMaxMS();
 	var delay = Math.min(randomness * pollIntervalMin * exponent, pollIntervalMax);
 	delay = Math.round(delay);
 
@@ -167,7 +193,13 @@ function getCurrentUser(onSuccess, onError) {
 }
 
 function getIssuesCount(onSuccess, onError) {
-	getJSON("issues.json?assigned_to_id=" + currentUserId + "&limit=50",
+	var jsonRequestUrl = "";
+	if(getRedmineUpdateUrl() != null) {
+		jsonRequestUrl = getRedmineUpdateUrl();
+	} else {
+		jsonRequestUrl = "issues.json?assigned_to_id=" + currentUserId + "&limit=50";
+	}
+	getJSON(jsonRequestUrl,
 		function(json){
 			if(json.issues != undefined && localStorage.showNotifications == '1') {
 				showNotificationOnNewIssue(json.issues);
