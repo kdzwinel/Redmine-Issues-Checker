@@ -10,5 +10,5 @@
    "name": "Redmine Issues Checker",
    "options_page": "options.html",
    "permissions": [ "tabs", "notifications", "<all_urls>" ],
-   "version": "0.52"
+   "version": "0.60"
 }

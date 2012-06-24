@@ -1,4 +1,6 @@
 var iconAnimation;
+var BADGE_COLOR_INACTIVE = [190, 190, 190, 230];
+var BADGE_COLOR_ACTIVE = [208, 0, 24, 255];
 
 //REQUEST VARIABLES
 var DEFAULT_POLL_INTERVAL_MIN_MS = 1000 * 60;  // 1 minute
@@ -22,7 +24,7 @@ function init() {
 	currentUserName = null;
 	issuesIds = null;
 
-	chrome.browserAction.setBadgeBackgroundColor({color:[208, 0, 24, 255]});
+	chrome.browserAction.setBadgeBackgroundColor({color:BADGE_COLOR_ACTIVE});
 
 	iconAnimation = new IconAnimation({
 		canvasObj: document.getElementById('canvas'),
@@ -114,22 +116,118 @@ function goToRedmine() {
 	});
 }
 
-function scheduleRequest() {
-	var randomness = Math.random() + 1;
-	var exponent = Math.pow(2, requestFailureCount);
-	var pollIntervalMin = getUpdateDelayMinMS();
-	var pollIntervalMax = getUpdateDelayMaxMS();
-	var delay = Math.min(randomness * pollIntervalMin * exponent, pollIntervalMax);
-	delay = Math.round(delay);
-
-	if(requestTimeoutHandler != null) {
-		window.clearTimeout(requestTimeoutHandler);
+function updateIssuesCount(allCount, newCount) {
+	//if number off issues changed, do a flip
+	if(
+		(localStorage.showIssues == 'active-new' && (issuesCount != allCount || issuesNewCount != newCount)) || 
+		(localStorage.showIssues == 'active' && issuesCount != allCount) ||
+		(localStorage.showIssues == 'new' && issuesNewCount != newCount)
+	){
+		iconAnimation.flip();
 	}
 
-	requestTimeoutHandler = window.setTimeout(startRequest, delay);
+	issuesCount = allCount;
+	issuesNewCount = newCount;
+
+	chrome.browserAction.setBadgeBackgroundColor({color:BADGE_COLOR_ACTIVE});
+	chrome.browserAction.setBadgeText({
+		text: printIssuesCount()
+	});
+	chrome.browserAction.setTitle({'title':'issues: ' + issuesCount + ' (' + newCount + ' new)'});
 }
 
-// ajax stuff
+function printIssuesCount() {
+	if(localStorage.showIssues == 'active-new') {
+		return issuesNewCount + ':' + issuesCount;
+	}
+
+	if(localStorage.showIssues == 'new') {
+		if(issuesNewCount != "0") {
+			return issuesNewCount.toString();
+		}
+	}
+
+	if(localStorage.showIssues == 'active') {
+		if(issuesCount != "0") {
+			return issuesCount.toString();
+		}
+	}
+
+	return "";
+}
+
+function countNewIssues(issuesObj) {
+	var newIssues = 0;
+	for(var i=0; i<issuesObj.length; i++) {
+		var issue = issuesObj[i];
+		if(issue.status !== undefined && issue.status.id == 1) {//new
+			newIssues ++;
+		}
+	}
+
+	return newIssues;
+}
+
+function showLoggedOut() {
+	issuesCount = -1;
+	issuesNewCount = -1;
+
+	chrome.browserAction.setIcon({path:"img/redmine_not_logged_in.png"});
+	chrome.browserAction.setBadgeBackgroundColor({color:COLOR_INACTIVE});
+	chrome.browserAction.setBadgeText({text:"?"});
+	chrome.browserAction.setTitle({'title':'disconnected'});
+}
+
+//NOTIFICATIONS
+function showNotificationOnNewIssue(issuesObj) {
+	var newIssuesIds = new Array();
+	for(var i=0; i<issuesObj.length; i++) {
+		var issue = issuesObj[i];
+		newIssuesIds.push(issue.id); 
+
+		//check if issue is new (if id array exists)
+		if(issuesIds != null && (issuesIds.indexOf(issue.id) == -1)) {
+			
+			//issue.author.name
+			//issue.status.name
+			//issue.project.name
+			//issue.created_on
+			//issue.updated_on
+
+			if(!localStorage.notificationsType || localStorage.notificationsType == 'standard') {
+				var notification = webkitNotifications.createNotification(
+					'img/redmine_logo_128.png',  // icon url - can be relative
+					'"' + issue.subject + '" by ' + issue.author.name,  // notification title
+					issue.description  // notification body text
+				);
+			} else {//extended notification
+				var notification = webkitNotifications.createHTMLNotification(
+					'notification.html'
+				);
+
+				setNewIssue(issue);
+			}
+
+			notification.show();
+
+			window.setTimeout(function(notification){
+				notification.cancel();
+			}, localStorage.notificationsTimeout * 1000, notification);
+		}
+	}
+
+	issuesIds = newIssuesIds;
+}
+
+function setNewIssue(issue) {
+	newIssueStack.push(issue);
+}
+
+function getNewIssue() {
+	return newIssueStack.pop();
+}
+
+//AJAX REQUESTS
 function startRequest() {
 	//redmine url is set by user
 	if(getRedmineUrl() != null) {
@@ -204,52 +302,20 @@ function getIssuesCount(onSuccess, onError) {
 	);
 }
 
-function showNotificationOnNewIssue(issuesObj) {
-	var newIssuesIds = new Array();
-	for(var i=0; i<issuesObj.length; i++) {
-		var issue = issuesObj[i];
-		newIssuesIds.push(issue.id); 
+//REQUEST SCHEDULING AND SENDING
+function scheduleRequest() {
+	var randomness = Math.random() + 1;
+	var exponent = Math.pow(2, requestFailureCount);
+	var pollIntervalMin = getUpdateDelayMinMS();
+	var pollIntervalMax = getUpdateDelayMaxMS();
+	var delay = Math.min(randomness * pollIntervalMin * exponent, pollIntervalMax);
+	delay = Math.round(delay);
 
-		//check if issue is new (if id array exists)
-		if(issuesIds != null && (issuesIds.indexOf(issue.id) == -1)) {
-			
-			//issue.author.name
-			//issue.status.name
-			//issue.project.name
-			//issue.created_on
-			//issue.updated_on
-
-			if(!localStorage.notificationsType || localStorage.notificationsType == 'standard') {
-				var notification = webkitNotifications.createNotification(
-					'img/redmine_logo_128.png',  // icon url - can be relative
-					'"' + issue.subject + '" by ' + issue.author.name,  // notification title
-					issue.description  // notification body text
-				);
-			} else {//extended notification
-				var notification = webkitNotifications.createHTMLNotification(
-					'notification.html'
-				);
-
-				setNewIssue(issue);
-			}
-
-			notification.show();
-
-			window.setTimeout(function(notification){
-				notification.cancel();
-			}, localStorage.notificationsTimeout * 1000, notification);
-		}
+	if(requestTimeoutHandler != null) {
+		window.clearTimeout(requestTimeoutHandler);
 	}
 
-	issuesIds = newIssuesIds;
-}
-
-function setNewIssue(issue) {
-	newIssueStack.push(issue);
-}
-
-function getNewIssue() {
-	return newIssueStack.pop();
+	requestTimeoutHandler = window.setTimeout(startRequest, delay);
 }
 
 function getJSON(url, onSuccess, onError) {
@@ -283,13 +349,16 @@ function getJSON(url, onSuccess, onError) {
 
         if(jsonDoc != undefined && jsonDoc.trim().length > 0)
         {
-           jsonObj = JSON.parse(jsonDoc);
+           try {
+              jsonObj = JSON.parse(jsonDoc);
+           } catch(e) {
+              handleError();
+              return;
+           }
 
            if (jsonObj) {
              handleSuccess(jsonObj);
              return;
-           } else {
-             console.error('Error: node error');
            }
         }
       }
@@ -314,64 +383,4 @@ function getJSON(url, onSuccess, onError) {
     console.error('Exception: ' + e);
     handleError();
   }
-}
-
-function updateIssuesCount(allCount, newCount) {
-	if(
-		(localStorage.showIssues == 'active-new' && (issuesCount != allCount || issuesNewCount != newCount)) || 
-		(localStorage.showIssues == 'active' && issuesCount != allCount) ||
-		(localStorage.showIssues == 'new' && issuesNewCount != newCount)
-	){
-		iconAnimation.flip();
-	}
-
-	issuesCount = allCount;
-	issuesNewCount = newCount;
-
-	chrome.browserAction.setBadgeText({
-		text: printIssuesCount()
-	});
-	chrome.browserAction.setTitle({'title':'issues: ' + issuesCount + ' (' + newCount + ' new)'});
-}
-
-function printIssuesCount() {
-	if(localStorage.showIssues == 'active-new') {
-		return issuesNewCount + ':' + issuesCount;
-	}
-
-	if(localStorage.showIssues == 'new') {
-		if(issuesNewCount != "0") {
-			return issuesNewCount.toString();
-		}
-	}
-
-	if(localStorage.showIssues == 'active') {
-		if(issuesCount != "0") {
-			return issuesCount.toString();
-		}
-	}
-
-	return "";
-}
-
-function countNewIssues(issuesObj) {
-	var newIssues = 0;
-	for(var i=0; i<issuesObj.length; i++) {
-		var issue = issuesObj[i];
-		if(issue.status !== undefined && issue.status.id == 1) {//new
-			newIssues ++;
-		}
-	}
-
-	return newIssues;
-}
-
-function showLoggedOut() {
-	issuesCount = -1;
-	issuesNewCount = -1;
-
-	chrome.browserAction.setIcon({path:"img/redmine_not_logged_in.png"});
-	chrome.browserAction.setBadgeBackgroundColor({color:[190, 190, 190, 230]});
-	chrome.browserAction.setBadgeText({text:"?"});
-	chrome.browserAction.setTitle({'title':'disconnected'});
 }
