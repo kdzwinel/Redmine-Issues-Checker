@@ -108,26 +108,26 @@ function init() {
 	tracker.innerHTML = 'tracker: <strong>' + issue.tracker.name + '</strong>';
 	priority.innerHTML = 'priority: <strong>' + issue.priority.name + '</strong>';
 
-	if(localStorage.notificationFieldAuthor != '1') {
+	if(!settings.get('notificationFieldAuthor')) {
 		wrapper.removeChild(author);
 	}
-	if(localStorage.notificationFieldTime != '1') {
+	if(!settings.get('notificationFieldTime')) {
 		wrapper.removeChild(time);
 	}
-	if(localStorage.notificationFieldProject != '1') {
+	if(!settings.get('notificationFieldProject')) {
 		wrapper.removeChild(project);
 	}
-	if(localStorage.notificationFieldPriority != '1') {
+	if(!settings.get('notificationFieldPriority')) {
 		wrapper.removeChild(priority);
 	}
-	if(localStorage.notificationFieldTracker != '1') {
+	if(!settings.get('notificationFieldTracker')) {
 		wrapper.removeChild(tracker);
 	}
 
-	document.body.style.backgroundColor = localStorage.notificationBgColor || 'white';
-	document.body.style.color = localStorage.notificationTextColor || '';
+	document.body.style.backgroundColor = settings.get('notificationBgColor');
+	document.body.style.color = settings.get('notificationTextColor');
 	var links = document.body.getElementsByTagName('a');
 	for(index in links) {
-		links[index].style.color = localStorage.notificationLinkColor || '#961b25';
+		links[index].style.color = settings.get('notificationLinkColor');
 	}
 }

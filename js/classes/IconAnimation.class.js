@@ -34,6 +34,13 @@ function IconAnimation(config) {
 
 		clearInterval(loadingTimer);
 		loadingTimer = 0;
+		chrome.browserAction.setBadgeText({text:""});
+	}
+	
+	this.reset = function () {
+		this.stopLoading();
+		clearInterval(animateFlip);
+		chrome.browserAction.setIcon({path: defaultIcon});
 	}
 
 	var drawIconAtLoading = function() {
@@ -85,5 +92,5 @@ function IconAnimation(config) {
 
 	canvasContext = canvas.getContext('2d');
 
-	chrome.browserAction.setIcon({path: defaultIcon});
+	this.reset();
 }

@@ -3,8 +3,6 @@ var BADGE_COLOR_INACTIVE = [190, 190, 190, 230];
 var BADGE_COLOR_ACTIVE = [208, 0, 24, 255];
 
 //REQUEST VARIABLES
-var DEFAULT_POLL_INTERVAL_MIN_MS = 1000 * 60;  // 1 minute
-var DEFAULT_POLL_INTERVAL_MAX_MS = 1000 * 60 * 60;  // 1 hour
 var requestFailureCount = 0;  // used for exponential backoff
 var requestTimeout = 1000 * 5;  // 5 seconds
 var requestTimeoutHandler = null;
@@ -24,48 +22,36 @@ function init() {
 	currentUserName = null;
 	issuesIds = null;
 
+	if(!iconAnimation) {
+		iconAnimation = new IconAnimation({
+			canvasObj: document.getElementById('canvas'),
+			imageObj: document.getElementById('image'),
+			defaultIcon: "img/redmine_logged_in.png"
+		});
+	} else {
+		iconAnimation.reset();
+	}
+	
 	chrome.browserAction.setBadgeBackgroundColor({color:BADGE_COLOR_ACTIVE});
-
-	iconAnimation = new IconAnimation({
-		canvasObj: document.getElementById('canvas'),
-		imageObj: document.getElementById('image'),
-		defaultIcon: "img/redmine_logged_in.png"
-	});
 	iconAnimation.startLoading();
 
 	startRequest();
 }
 
-function getUpdateDelayMinMS() {
-	if( !localStorage.updateDelayMinMS ) {
-		return DEFAULT_POLL_INTERVAL_MIN_MS;
-	}
-
-	return localStorage.updateDelayMinMS;
-}
-
-function getUpdateDelayMaxMS() {
-	if( !localStorage.updateDelayMaxMS ) {
-		return DEFAULT_POLL_INTERVAL_MAX_MS;
-	}
-
-	return localStorage.updateDelayMaxMS;
-}
-
 function getRedmineUrl() {
-	if( !localStorage.redmineUrl ) {
+	if( !settings.get('redmineUrl') ) {
 		return null;
 	}
 
-	return localStorage.redmineUrl;
+	return settings.get('redmineUrl');
 }
 
 function getRedmineUpdateUrl() {
-	if( !localStorage.redmineUpdateUrl ) {
+	if( !settings.get('requestUrl') ) {
 		return null;
 	}
 
-	return localStorage.redmineUpdateUrl;
+	return settings.get('requestUrl');
 }
 
 function isRedmineUrl(url) {
@@ -92,8 +78,8 @@ function goToRedmine() {
 
 	chrome.tabs.getAllInWindow(undefined, function(tabs) {
 		var page = 'my/page';
-		if(localStorage.iconPressUrl) {
-			page = localStorage.iconPressUrl;
+		if(settings.get('iconPressUrl')) {
+			page = settings.get('iconPressUrl');
 			if(page.length > 0 && page.indexOf('/') == 0) {
 				page = page.substring(1);
 			}
@@ -103,7 +89,7 @@ function goToRedmine() {
 			if (tab.url && isRedmineUrl(tab.url)) {
 				var tabOptions = {selected: true};
 
-				if(localStorage.iconPressDontRedirect != '1') {
+				if(!settings.get('iconPressDontRedirect')) {
 					tabOptions.url = getRedmineUrl() + page;
 				}
 
@@ -119,9 +105,9 @@ function goToRedmine() {
 function updateIssuesCount(allCount, newCount) {
 	//if number off issues changed, do a flip
 	if(
-		(localStorage.showIssues == 'active-new' && (issuesCount != allCount || issuesNewCount != newCount)) || 
-		(localStorage.showIssues == 'active' && issuesCount != allCount) ||
-		(localStorage.showIssues == 'new' && issuesNewCount != newCount)
+		(settings.get('showIssues') == 'active-new' && (issuesCount != allCount || issuesNewCount != newCount)) || 
+		(settings.get('showIssues') == 'active' && issuesCount != allCount) ||
+		(settings.get('showIssues') == 'new' && issuesNewCount != newCount)
 	){
 		iconAnimation.flip();
 	}
@@ -137,17 +123,17 @@ function updateIssuesCount(allCount, newCount) {
 }
 
 function printIssuesCount() {
-	if(localStorage.showIssues == 'active-new') {
+	if(settings.get('showIssues') == 'active-new') {
 		return issuesNewCount + ':' + issuesCount;
 	}
 
-	if(localStorage.showIssues == 'new') {
+	if(settings.get('showIssues') == 'new') {
 		if(issuesNewCount != "0") {
 			return issuesNewCount.toString();
 		}
 	}
 
-	if(localStorage.showIssues == 'active') {
+	if(settings.get('showIssues') == 'active') {
 		if(issuesCount != "0") {
 			return issuesCount.toString();
 		}
@@ -173,7 +159,7 @@ function showLoggedOut() {
 	issuesNewCount = -1;
 
 	chrome.browserAction.setIcon({path:"img/redmine_not_logged_in.png"});
-	chrome.browserAction.setBadgeBackgroundColor({color:COLOR_INACTIVE});
+	chrome.browserAction.setBadgeBackgroundColor({color:BADGE_COLOR_INACTIVE});
 	chrome.browserAction.setBadgeText({text:"?"});
 	chrome.browserAction.setTitle({'title':'disconnected'});
 }
@@ -194,7 +180,7 @@ function showNotificationOnNewIssue(issuesObj) {
 			//issue.created_on
 			//issue.updated_on
 
-			if(!localStorage.notificationsType || localStorage.notificationsType == 'standard') {
+			if(!settings.get('notificationsType') || settings.get('notificationsType') == 'standard') {
 				var notification = webkitNotifications.createNotification(
 					'img/redmine_logo_128.png',  // icon url - can be relative
 					'"' + issue.subject + '" by ' + issue.author.name,  // notification title
@@ -212,7 +198,7 @@ function showNotificationOnNewIssue(issuesObj) {
 
 			window.setTimeout(function(notification){
 				notification.cancel();
-			}, localStorage.notificationsTimeout * 1000, notification);
+			}, settings.get('notificationsTimeout'), notification);
 		}
 	}
 
@@ -289,7 +275,7 @@ function getIssuesCount(onSuccess, onError) {
 	}
 	getJSON(jsonRequestUrl,
 		function(json){
-			if(json.issues != undefined && localStorage.showNotifications == '1') {
+			if(json.issues != undefined && settings.get('showNotifications') == '1') {
 				showNotificationOnNewIssue(json.issues);
 			}
 			if(json.total_count != undefined) {
@@ -306,8 +292,8 @@ function getIssuesCount(onSuccess, onError) {
 function scheduleRequest() {
 	var randomness = Math.random() + 1;
 	var exponent = Math.pow(2, requestFailureCount);
-	var pollIntervalMin = getUpdateDelayMinMS();
-	var pollIntervalMax = getUpdateDelayMaxMS();
+	var pollIntervalMin = settings.get('updateDelayMinMS');
+	var pollIntervalMax = 1000 * 60 * 60;//1 hour
 	var delay = Math.min(randomness * pollIntervalMin * exponent, pollIntervalMax);
 	delay = Math.round(delay);
 
@@ -373,8 +359,8 @@ function getJSON(url, onSuccess, onError) {
     xhr.open("GET", getRedmineUrl() + url, true);
 
     //attach authorization credentials if avaiable
-    if(localStorage.userLogin && localStorage.userPassword) {
-      var hash = Base64.encode(localStorage.userLogin + ':' + localStorage.userPassword);
+    if(settings.get('userLogin') && settings.get('userPassword')) {
+      var hash = Base64.encode(settings.get('userLogin') + ':' + settings.get('userPassword'));
       xhr.setRequestHeader('Authorization', "Basic " + hash);
     }
 
