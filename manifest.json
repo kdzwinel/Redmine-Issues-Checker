@@ -5,10 +5,10 @@
    },
    "description": "Keep track of Redmine issues assigned to you.",
    "icons": {
-      "128": "redmine_logo_128.png"
+      "128": "img/redmine_logo_128.png"
    },
    "name": "Redmine Issues Checker",
-   "options_page": "options.html",
+   "options_page": "fancy-settings/source/index.html",
    "permissions": [ "tabs", "notifications", "<all_urls>" ],
-   "version": "0.52"
+   "version": "0.60"
 }

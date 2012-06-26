@@ -1,0 +1,52 @@
+<!--
+// Copyright (c) 2011 Frank Kohlhepp
+// https://github.com/frankkohlhepp/fancy-settings
+// License: LGPL v2.1
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title id="title"></title>
+        
+        <!-- Stylesheets -->
+        <link id="favicon" rel="icon" href="">
+        <link rel="stylesheet" href="lib/default.css" media="screen">
+        <link rel="stylesheet" href="css/main.css" media="screen">
+        <link rel="stylesheet" href="css/setting.css" media="screen">
+        <link rel="stylesheet" href="custom.css" media="screen">
+        
+        <!-- JavaScripts -->
+        <script src="lib/mootools-core.js"></script>
+        <script src="lib/store.js"></script>
+        <script src="js/classes/tab.js"></script>
+        <script src="js/classes/setting.js"></script>
+        <script src="js/classes/search.js"></script>
+        <script src="js/classes/fancy-settings.js"></script>
+        <script src="i18n.js"></script>
+        <script src="js/i18n.js"></script>
+        <script src="settings.js"></script>
+    </head>
+    <body class="no-select">
+        <div id="sidebar" class="fancy">
+            <img id="icon" src="" alt=""><h1 id="settings-label"></h1>
+            <div id="tab-container">
+                <div id="search-container" class="tab">
+                    <input id="search" type="search" placeholder="">
+                </div>
+                <div id="share-container">
+                    <p><g:plusone size="medium" href="https://chrome.google.com/webstore/detail/cmfcfjopbfmekonldgghddhkphapbpek"></g:plusone></p>
+                    <p><a href="https://twitter.com/share" class="twitter-share-button" data-url="https://chrome.google.com/webstore/detail/cmfcfjopbfmekonldgghddhkphapbpek" data-text="Redmine Issues Checker" data-count="horizontal">&nbsp;</a></p>
+                    <p><iframe src="http://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fchrome.google.com%2Fwebstore%2Fdetail%2Fcmfcfjopbfmekonldgghddhkphapbpek&amp;send=false&amp;layout=button_count&amp;width=50&amp;show_faces=false&amp;action=recommend&amp;colorscheme=light&amp;font&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:130px; height:21px;" allowTransparency="true"></iframe></p>
+                </div>
+            </div>
+        </div>
+        <div id="content">
+            <div id="search-result-container" class="tab-content">
+                <h2 id="search-label"></h2>
+            </div>
+        </div>
+     <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+     <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+    </body>
+</html>
