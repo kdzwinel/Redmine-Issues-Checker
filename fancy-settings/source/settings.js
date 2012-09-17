@@ -1,4 +1,4 @@
-var notification;
+ var notification;
 var notificationTimeout;
 
 function testNotification() {
@@ -242,7 +242,7 @@ window.addEvent("domready", function () {
 		"group": i18n.get("Request URL"),
 		"name": "requestUrl",
 		"type": "text",
-		"label": i18n.get("Enter curstom request URL (or leave it empty to use default one):"),
+		"label": i18n.get("Enter custom request URL (or leave it empty to use default one):"),
 		"text": "issues.json?query_id=6",
 		"afterSave": reloadBackground
 	});
