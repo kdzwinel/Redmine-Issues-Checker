@@ -37,7 +37,8 @@ Author
 
 **Konrad Dzwinel**
 
-+ http://www.goldenline.pl/konrad-dzwinel
++ https://github.com/kdzwinel
++ http://www.linkedin.com/pub/konrad-dzwinel/53/599/366/en
 
 License
 -------
