@@ -23,15 +23,6 @@ Have a bug? Please create an issue here on GitHub!
 
 https://github.com/kdzwinel/Redmine-Issues-Checker/issues
 
-Developers
-----------
-+ background.html - extension core code (ajax calls, toolbar icon, notifications)
-+ options.html - options page (options form, validation and saving)
-+ Base64.js - Base64 encoding/decoding by webtoolkit (used for encoding login data)
-+ manifest.json - configuration file used by google chrome webstore
-
-+ gfx - graphic files (logo, promotional banners) in xcf format
-
 Author
 ------
 

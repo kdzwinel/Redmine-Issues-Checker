@@ -370,3 +370,6 @@ function getJSON(url, onSuccess, onError) {
     handleError();
   }
 }
+
+//call init on window load
+window.onload = init;

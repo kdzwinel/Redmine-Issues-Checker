@@ -1,14 +1,18 @@
 {
-   "background_page": "background.html",
-   "browser_action": {
-      "default_title": "Redmine Issues Checker"
-   },
+   "name": "Redmine Issues Checker",
    "description": "Keep track of Redmine issues assigned to you.",
+   "version": "0.61",
+   "manifest_version": 2,
+   "permissions": [ "tabs", "notifications", "<all_urls>" ],
    "icons": {
       "128": "img/redmine_logo_128.png"
    },
-   "name": "Redmine Issues Checker",
+   "background": {
+      "page": "background.html"
+   },
+   "browser_action": {
+      "default_title": "Redmine Issues Checker"
+   },
    "options_page": "fancy-settings/source/index.html",
-   "permissions": [ "tabs", "notifications", "<all_urls>" ],
-   "version": "0.60"
+   "content_security_policy": "script-src 'self' https://apis.google.com https://platform.twitter.com https://www.facebook.com; object-src 'self'"
 }
