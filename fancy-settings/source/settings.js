@@ -1,14 +1,5 @@
- var notification;
-var notificationTimeout;
-
 function testNotification() {
 	var settings = new Store("settings");
-
-	if(notification) {
-		notification.cancel();
-		clearTimeout(notificationTimeout);
-	}
-
 	var now = new Date();
 	var issue = {
 		subject: 'Test subject: Lorem ipsum dolor sit amet',
@@ -21,25 +12,7 @@ function testNotification() {
 		priority: {name: 'Normal'}
 	};
 
-	if(settings.get('notificationsType') == 'standard') {
-		notification = webkitNotifications.createNotification(
-			'../../img/redmine_logo_128.png',  // icon url - can be relative
-			'"' + issue.subject + '" by ' + issue.author.name,  // notification title
-			issue.description  // notification body text
-		);
-	} else {
-		notification = webkitNotifications.createHTMLNotification(
-			'../../notification.html'
-		);
-
-		chrome.extension.getBackgroundPage().setNewIssue(issue);
-	}
-
-	notification.show();
-
-	notificationTimeout = window.setTimeout(function(notification){
-				notification.cancel();
-	}, settings.get('notificationsTimeout'), notification);
+    NotificationsProxy.create(settings, issue);
 }
 
 var reloadTimeout;
@@ -55,7 +28,7 @@ function reloadBackground() {
 
 window.addEvent("domready", function () {
 	var settings = new FancySettings("Redmine Issues Checker", "../../img/redmine_logo_128.png");
-    
+
 	//General
 	var redmineUrl = settings.create({
 		"tab": i18n.get("General"),
@@ -233,9 +206,9 @@ window.addEvent("domready", function () {
 		"group": i18n.get("Test"),
 		"name": "test_notification",
 		"type": "description",
-		"text": "<button onclick='testNotification()'>" + i18n.get("Test notification") + "</button>"
+		"text": "<button id='testNotificationBtn'>" + i18n.get("Test notification") + "</button>"
 	});
-	
+
 	//ADVANCED
 	var requestUrl = settings.create({
 		"tab": i18n.get("Advanced"),
@@ -261,7 +234,7 @@ window.addEvent("domready", function () {
 		    return (value / 1000).floor() + " sec";
 		}
     });
-	
+
 	//ABOUT
 	settings.create({
 		"tab": i18n.get("About"),
@@ -270,7 +243,7 @@ window.addEvent("domready", function () {
 		"type": "description",
 		"text": "Fork the code, report bugs and request the features via <a href='https://github.com/kdzwinel/Redmine-Issues-Checker'>Github</a>."
 	});
-	
+
 	settings.create({
 		"tab": i18n.get("About"),
 		"group": i18n.get("Used projects"),
@@ -282,7 +255,7 @@ window.addEvent("domready", function () {
 		<li><a href='http://www.webtoolkit.info/'>Base64 encode / decode</a></li>\
 		</ul>"
 	});
-	
+
 	settings.create({
 		"tab": i18n.get("About"),
 		"group": i18n.get("Author"),
@@ -298,4 +271,7 @@ window.addEvent("domready", function () {
 		"type": "description",
 		"text": "<a href='https://github.com/Regul777'>Dima Yakovenko</a> - custom request URL, custom update delay"
 	});
+
+    document.getElementById('testNotificationBtn').onclick = testNotification;
 });
+

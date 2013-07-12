@@ -13,7 +13,7 @@ var issuesNewCount = -1;
 var currentUserId = null;
 var currentUserName = null;
 var issuesIds = null;
-var newIssueStack = new Array(); //issues that just arrived
+var newIssueStack = []; //issues that just arrived
 
 function init() {
 	issuesCount = -1;
@@ -166,7 +166,7 @@ function showLoggedOut() {
 
 //NOTIFICATIONS
 function showNotificationOnNewIssue(issuesObj) {
-	var newIssuesIds = new Array();
+	var newIssuesIds = [];
 	for(var i=0; i<issuesObj.length; i++) {
 		var issue = issuesObj[i];
 		newIssuesIds.push(issue.id); 
@@ -180,25 +180,7 @@ function showNotificationOnNewIssue(issuesObj) {
 			//issue.created_on
 			//issue.updated_on
 
-			if(!settings.get('notificationsType') || settings.get('notificationsType') == 'standard') {
-				var notification = webkitNotifications.createNotification(
-					'img/redmine_logo_128.png',  // icon url - can be relative
-					'"' + issue.subject + '" by ' + issue.author.name,  // notification title
-					issue.description  // notification body text
-				);
-			} else {//extended notification
-				var notification = webkitNotifications.createHTMLNotification(
-					'notification.html'
-				);
-
-				setNewIssue(issue);
-			}
-
-			notification.show();
-
-			window.setTimeout(function(notification){
-				notification.cancel();
-			}, settings.get('notificationsTimeout'), notification);
+            NotificationsProxy.create(settings, issue);
 		}
 	}
 
@@ -326,35 +308,34 @@ function getJSON(url, onSuccess, onError) {
   }
 
   try {
-    xhr.onreadystatechange = function(){
-      if (xhr.readyState != 4)
-        return;
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState != 4)
+            return;
 
-      if (xhr.responseText) {
-        var jsonDoc = xhr.responseText;
+        if (xhr.responseText) {
+            var jsonDoc = xhr.responseText;
 
-        if(jsonDoc != undefined && jsonDoc.trim().length > 0)
-        {
-           try {
-              jsonObj = JSON.parse(jsonDoc);
-           } catch(e) {
-              handleError();
-              return;
-           }
+            if (jsonDoc != undefined && jsonDoc.trim().length > 0) {
+                try {
+                    jsonObj = JSON.parse(jsonDoc);
+                } catch (e) {
+                    handleError();
+                    return;
+                }
 
-           if (jsonObj) {
-             handleSuccess(jsonObj);
-             return;
-           }
+                if (jsonObj) {
+                    handleSuccess(jsonObj);
+                    return;
+                }
+            }
         }
-      }
 
-      handleError();
-    }
+        handleError();
+    };
 
-    xhr.onerror = function(error) {
-      handleError();
-    }
+    xhr.onerror = function (error) {
+        handleError();
+    };
 
     xhr.open("GET", getRedmineUrl() + url, true);
 

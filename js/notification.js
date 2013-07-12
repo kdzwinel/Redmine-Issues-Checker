@@ -127,7 +127,8 @@ function init() {
 	document.body.style.backgroundColor = settings.get('notificationBgColor');
 	document.body.style.color = settings.get('notificationTextColor');
 	var links = document.body.getElementsByTagName('a');
-	for(index in links) {
+	for(var index in links) {
 		links[index].style.color = settings.get('notificationLinkColor');
 	}
 }
+init();

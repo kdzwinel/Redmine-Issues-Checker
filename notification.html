@@ -24,8 +24,7 @@ body {
 }
 
 #wrapper {
-	padding: 5px;
-	padding-top: 8px;
+    padding: 8px 5px 5px;
 }
 
 #title {
@@ -59,29 +58,29 @@ body {
 
 #time {
 	position: absolute;
-	top: 0px;
+	top: 0;
 	right: 3px;
 	color: gray;
 }
 </style>
 	<script src='fancy-settings/source/lib/store.js'></script>
 	<script src='js/storeInit.js'></script>
-	<script type="text/javascript" src='js/notification.js'></script>
 </head>
-<body onload="init()">
-	<div id="wrapper">
-		<h1 id='title'></h1>
-		<div id='time'></div>
+<body>
+<div id="wrapper">
+    <h1 id='title'></h1>
+    <div id='time'></div>
 
-		<div id='author'></div>
-		<div id='project'></div>
-		<div style='clear:both'></div>
+    <div id='author'></div>
+    <div id='project'></div>
+    <div style='clear:both'></div>
 
-		<div id='tracker'></div>
-		<div id='priority'></div>
-		<div style='clear:both'></div>
+    <div id='tracker'></div>
+    <div id='priority'></div>
+    <div style='clear:both'></div>
 
-		<div id='desc'></div>
-	</div>
+    <div id='desc'></div>
+</div>
+<script type="text/javascript" src='js/notification.js'></script>
 </body>
 </html>

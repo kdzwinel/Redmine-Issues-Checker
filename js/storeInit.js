@@ -28,7 +28,7 @@ var settings = new Store("settings", {
 var oldOptions = ['redmineUrl', 'showIssues', 'userLogin', 'userPassword', 'iconPressUrl', 'iconPressDontRedirect', 'showNotifications', 'notificationsTimeout', 'notificationsType', 'notificationFieldAuthor', 'notificationFieldPriority', 'notificationFieldProject', 'notificationFieldTime', 'notificationFieldTracker', 'notificationLinkColor', 'notificationTextColor', 'notificationBgColor'];
 
 //import old options
-for(idx in oldOptions) {
+for(var idx in oldOptions) {
 	var optionName = oldOptions[idx];
 
 	if(localStorage.hasOwnProperty(optionName)) {
