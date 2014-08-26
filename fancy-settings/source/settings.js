@@ -12,7 +12,7 @@ function testNotification() {
 		priority: {name: 'Normal'}
 	};
 
-    NotificationsProxy.create(settings, issue);
+  NotificationsProxy.create(settings, issue);
 }
 
 var reloadTimeout;
@@ -120,86 +120,7 @@ window.addEvent("domready", function () {
 		"displayModifier": function (value) {
 		    return (value / 1000).floor() + " sec";
 		}
-        });
-
-	var notificationsType = settings.create({
-		"tab": i18n.get("Notifications"),
-		"group": i18n.get("General"),
-		"name": "notificationsType",
-		"type": "radioButtons",
-		"label": i18n.get("Notifications to use:"),
-		"options": [
-		    ["standard", i18n.get("standard (default Chrome notifications)")],
-		    ["extended", i18n.get("extended (styled notifications with clickable links and more options)")]
-		]
-	});
-
-	var notificationFieldAuthor = settings.create({
-		"tab": i18n.get("Notifications"),
-		"group": i18n.get("Extended Notifications Options"),
-		"name": "notificationFieldAuthor",
-		"type": "checkbox",
-		"label": i18n.get("Show issue author")
-	});
-
-	var notificationFieldTime = settings.create({
-		"tab": i18n.get("Notifications"),
-		"group": i18n.get("Extended Notifications Options"),
-		"name": "notificationFieldTime",
-		"type": "checkbox",
-		"label": i18n.get("Show issue creation date")
-	});
-
-	var notificationFieldProject = settings.create({
-		"tab": i18n.get("Notifications"),
-		"group": i18n.get("Extended Notifications Options"),
-		"name": "notificationFieldProject",
-		"type": "checkbox",
-		"label": i18n.get("Show issue project name")
-	});
-
-	var notificationFieldPriority = settings.create({
-		"tab": i18n.get("Notifications"),
-		"group": i18n.get("Extended Notifications Options"),
-		"name": "notificationFieldPriority",
-		"type": "checkbox",
-		"label": i18n.get("Show issue priority (eg \"Normal\", \"Urgent\")")
-	});
-
-	var notificationFieldTracker = settings.create({
-		"tab": i18n.get("Notifications"),
-		"group": i18n.get("Extended Notifications Options"),
-		"name": "notificationFieldTracker",
-		"type": "checkbox",
-		"label": i18n.get("Show issue tracker (eg \"Bug\", \"Feature\")")
-	});
-
-	var notificationBgColor = settings.create({
-		"tab": i18n.get("Notifications"),
-		"group": i18n.get("Extended Notifications Options"),
-		"name": "notificationBgColor",
-		"type": "text",
-		"label": i18n.get("Notification background color:"),
-		"text": "gray or #aacf00 or rgb(200, 100, 50)"
-	});
-
-	var notificationTextColor = settings.create({
-		"tab": i18n.get("Notifications"),
-		"group": i18n.get("Extended Notifications Options"),
-		"name": "notificationTextColor",
-		"type": "text",
-		"label": i18n.get("Notification text color:"),
-		"text": "gray or #aacf00 or rgb(200, 100, 50)"
-	});
-
-	var notificationLinkColor = settings.create({
-		"tab": i18n.get("Notifications"),
-		"group": i18n.get("Extended Notifications Options"),
-		"name": "notificationLinkColor",
-		"type": "text",
-		"label": i18n.get("Notification links color:"),
-		"text": "gray or #aacf00 or rgb(200, 100, 50)"
-	});
+  });
 
 	settings.create({
 		"tab": i18n.get("Notifications"),
@@ -272,6 +193,6 @@ window.addEvent("domready", function () {
 		"text": "<a href='https://github.com/Regul777'>Dima Yakovenko</a> - custom request URL, custom update delay"
 	});
 
-    document.getElementById('testNotificationBtn').onclick = testNotification;
+  document.getElementById('testNotificationBtn').onclick = testNotification;
 });
 

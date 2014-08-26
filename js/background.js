@@ -180,7 +180,7 @@ function showNotificationOnNewIssue(issuesObj) {
 			//issue.created_on
 			//issue.updated_on
 
-            NotificationsProxy.create(settings, issue);
+      NotificationsProxy.create(settings, issue);
 		}
 	}
 
