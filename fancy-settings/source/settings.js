@@ -252,7 +252,8 @@ window.addEvent("domready", function () {
 		"group": i18n.get("Thanks to"),
 		"name": "thanks_to",
 		"type": "description",
-		"text": "<a href='https://github.com/Regul777'>Dima Yakovenko</a> - custom request URL, custom update delay"
+		"text": "<a href='https://plan.io/redmine-hosting/' style='display: inline-block;vertical-align: middle;'/><img src='../../img/planio.png' style='height:25px'/></a> - No 1 in Redmine Hosting<br/>" +
+		"<a href='https://github.com/Regul777'>Dima Yakovenko</a> - custom request URL, custom update delay"
 	});
 
 	document.getElementById('testNotificationBtn').onclick = testNotification;
