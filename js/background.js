@@ -39,11 +39,17 @@ function init() {
 }
 
 function getRedmineUrl() {
-	if( !settings.get('redmineUrl') ) {
+	var url = settings.get('redmineUrl');
+
+	if( !url ) {
 		return null;
 	}
 
-	return settings.get('redmineUrl');
+	if( url.substr(-1) !== '/' ) {
+		url += '/';
+	}
+
+	return url;
 }
 
 function getRedmineUpdateUrl() {
