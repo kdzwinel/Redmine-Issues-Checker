@@ -45,7 +45,17 @@ window.addEvent("domready", function () {
 		"group": i18n.get("Authentication"),
 		"name": "authDesc",
 		"type": "description",
-		"text": i18n.get("This is optional and will only work if REST API is enabled by your Redmine administrator (Administration &raquo; Settings &raquo; Authentication).")
+		"text": i18n.get("Please provide API key *or* login credentials. Extension will only work if REST API is enabled by your Redmine administrator (Administration &raquo; Settings &raquo; Authentication).")
+	});
+
+	var apiKey = settings.create({
+		"tab": i18n.get("General"),
+		"group": i18n.get("Authentication"),
+		"name": "apiKey",
+		"type": "text",
+		"label": i18n.get("API key:"),
+		"masked": true,
+		"afterSave": reloadBackground
 	});
 
 	var userLogin = settings.create({

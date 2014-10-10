@@ -22,7 +22,7 @@ function init() {
 	currentUserName = null;
 	issuesIds = null;
 
-	if(!iconAnimation) {
+	if (!iconAnimation) {
 		iconAnimation = new IconAnimation({
 			canvasObj: document.getElementById('canvas'),
 			imageObj: document.getElementById('image'),
@@ -31,8 +31,8 @@ function init() {
 	} else {
 		iconAnimation.reset();
 	}
-	
-	chrome.browserAction.setBadgeBackgroundColor({color:BADGE_COLOR_ACTIVE});
+
+	chrome.browserAction.setBadgeBackgroundColor({color: BADGE_COLOR_ACTIVE});
 	iconAnimation.startLoading();
 
 	startRequest();
@@ -41,11 +41,11 @@ function init() {
 function getRedmineUrl() {
 	var url = settings.get('redmineUrl');
 
-	if( !url ) {
+	if (!url) {
 		return null;
 	}
 
-	if( url.substr(-1) !== '/' ) {
+	if (url.substr(-1) !== '/') {
 		url += '/';
 	}
 
@@ -53,7 +53,7 @@ function getRedmineUrl() {
 }
 
 function getRedmineUpdateUrl() {
-	if( !settings.get('requestUrl') ) {
+	if (!settings.get('requestUrl')) {
 		return null;
 	}
 
@@ -66,27 +66,27 @@ function isRedmineUrl(url) {
 	return (url.indexOf(redmine) == 0);
 }
 
-chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo) {
 	if (changeInfo.url && isRedmineUrl(changeInfo.url)) {
 		startRequest();
 	}
 });
 
 // Called when the user clicks on the browser action.
-chrome.browserAction.onClicked.addListener(function(tab) {
+chrome.browserAction.onClicked.addListener(function (tab) {
 	goToRedmine();
 });
 
 function goToRedmine() {
-	if(getRedmineUrl() == null) {
+	if (getRedmineUrl() == null) {
 		return;
 	}
 
-	chrome.tabs.getAllInWindow(undefined, function(tabs) {
+	chrome.tabs.getAllInWindow(undefined, function (tabs) {
 		var page = 'my/page';
-		if(settings.get('iconPressUrl')) {
+		if (settings.get('iconPressUrl')) {
 			page = settings.get('iconPressUrl');
-			if(page.length > 0 && page.indexOf('/') == 0) {
+			if (page.length > 0 && page.indexOf('/') == 0) {
 				page = page.substring(1);
 			}
 		}
@@ -95,7 +95,7 @@ function goToRedmine() {
 			if (tab.url && isRedmineUrl(tab.url)) {
 				var tabOptions = {selected: true};
 
-				if(!settings.get('iconPressDontRedirect')) {
+				if (!settings.get('iconPressDontRedirect')) {
 					tabOptions.url = getRedmineUrl() + page;
 				}
 
@@ -110,37 +110,37 @@ function goToRedmine() {
 
 function updateIssuesCount(allCount, newCount) {
 	//if number off issues changed, do a flip
-	if(
-		(settings.get('showIssues') == 'active-new' && (issuesCount != allCount || issuesNewCount != newCount)) || 
+	if (
+		(settings.get('showIssues') == 'active-new' && (issuesCount != allCount || issuesNewCount != newCount)) ||
 		(settings.get('showIssues') == 'active' && issuesCount != allCount) ||
 		(settings.get('showIssues') == 'new' && issuesNewCount != newCount)
-	){
+	) {
 		iconAnimation.flip();
 	}
 
 	issuesCount = allCount;
 	issuesNewCount = newCount;
 
-	chrome.browserAction.setBadgeBackgroundColor({color:BADGE_COLOR_ACTIVE});
+	chrome.browserAction.setBadgeBackgroundColor({color: BADGE_COLOR_ACTIVE});
 	chrome.browserAction.setBadgeText({
 		text: printIssuesCount()
 	});
-	chrome.browserAction.setTitle({'title':'issues: ' + issuesCount + ' (' + newCount + ' new)'});
+	chrome.browserAction.setTitle({'title': 'issues: ' + issuesCount + ' (' + newCount + ' new)'});
 }
 
 function printIssuesCount() {
-	if(settings.get('showIssues') == 'active-new') {
+	if (settings.get('showIssues') == 'active-new') {
 		return issuesNewCount + ':' + issuesCount;
 	}
 
-	if(settings.get('showIssues') == 'new') {
-		if(issuesNewCount != "0") {
+	if (settings.get('showIssues') == 'new') {
+		if (issuesNewCount != "0") {
 			return issuesNewCount.toString();
 		}
 	}
 
-	if(settings.get('showIssues') == 'active') {
-		if(issuesCount != "0") {
+	if (settings.get('showIssues') == 'active') {
+		if (issuesCount != "0") {
 			return issuesCount.toString();
 		}
 	}
@@ -150,10 +150,10 @@ function printIssuesCount() {
 
 function countNewIssues(issuesObj) {
 	var newIssues = 0;
-	for(var i=0; i<issuesObj.length; i++) {
+	for (var i = 0; i < issuesObj.length; i++) {
 		var issue = issuesObj[i];
-		if(issue.status !== undefined && issue.status.id == 1) {//new
-			newIssues ++;
+		if (issue.status !== undefined && issue.status.id == 1) {//new
+			newIssues++;
 		}
 	}
 
@@ -164,29 +164,29 @@ function showLoggedOut() {
 	issuesCount = -1;
 	issuesNewCount = -1;
 
-	chrome.browserAction.setIcon({path:"img/redmine_not_logged_in.png"});
-	chrome.browserAction.setBadgeBackgroundColor({color:BADGE_COLOR_INACTIVE});
-	chrome.browserAction.setBadgeText({text:"?"});
-	chrome.browserAction.setTitle({'title':'disconnected'});
+	chrome.browserAction.setIcon({path: "img/redmine_not_logged_in.png"});
+	chrome.browserAction.setBadgeBackgroundColor({color: BADGE_COLOR_INACTIVE});
+	chrome.browserAction.setBadgeText({text: "?"});
+	chrome.browserAction.setTitle({'title': 'disconnected'});
 }
 
 //NOTIFICATIONS
 function showNotificationOnNewIssue(issuesObj) {
 	var newIssuesIds = [];
-	for(var i=0; i<issuesObj.length; i++) {
+	for (var i = 0; i < issuesObj.length; i++) {
 		var issue = issuesObj[i];
-		newIssuesIds.push(issue.id); 
+		newIssuesIds.push(issue.id);
 
 		//check if issue is new (if id array exists)
-		if(issuesIds != null && (issuesIds.indexOf(issue.id) == -1)) {
-			
+		if (issuesIds != null && (issuesIds.indexOf(issue.id) == -1)) {
+
 			//issue.author.name
 			//issue.status.name
 			//issue.project.name
 			//issue.created_on
 			//issue.updated_on
 
-            NotificationsProxy.create(settings, issue);
+			NotificationsProxy.create(settings, issue);
 		}
 	}
 
@@ -204,14 +204,14 @@ function getNewIssue() {
 //AJAX REQUESTS
 function startRequest() {
 	//redmine url is set by user
-	if(getRedmineUrl() != null) {
+	if (getRedmineUrl() != null) {
 		//current user data are not loaded
-		if(currentUserId == null) {
+		if (currentUserId == null) {
 			getCurrentUser(
-				function() {
+				function () {
 					startRequest();
 				},
-				function() {
+				function () {
 					iconAnimation.stopLoading();
 					showLoggedOut();
 					scheduleRequest();
@@ -219,14 +219,14 @@ function startRequest() {
 			);
 		} else {
 			getIssuesCount(
-				function(allCount, newCount) {
+				function (allCount, newCount) {
 					iconAnimation.stopLoading();
 					updateIssuesCount(allCount, newCount);
 					scheduleRequest();
 				},
-				function() {
+				function () {
 					iconAnimation.stopLoading();
-					if(requestFailureCount > 1) {
+					if (requestFailureCount > 1) {
 						showLoggedOut();
 					}
 					scheduleRequest();
@@ -241,8 +241,8 @@ function startRequest() {
 
 function getCurrentUser(onSuccess, onError) {
 	getJSON("users/current.json",
-		function(json){
-			if( json.user ) {
+		function (json) {
+			if (json.user) {
 				currentUserName = json.user.firstname + ' ' + json.user.lastname;
 				currentUserId = json.user.id;
 				onSuccess();
@@ -256,17 +256,17 @@ function getCurrentUser(onSuccess, onError) {
 
 function getIssuesCount(onSuccess, onError) {
 	var jsonRequestUrl = "";
-	if(getRedmineUpdateUrl() != null) {
+	if (getRedmineUpdateUrl() != null) {
 		jsonRequestUrl = getRedmineUpdateUrl();
 	} else {
 		jsonRequestUrl = "issues.json?assigned_to_id=" + currentUserId + "&limit=50";
 	}
 	getJSON(jsonRequestUrl,
-		function(json){
-			if(json.issues != undefined && settings.get('showNotifications') == '1') {
+		function (json) {
+			if (json.issues != undefined && settings.get('showNotifications') == '1') {
 				showNotificationOnNewIssue(json.issues);
 			}
-			if(json.total_count != undefined) {
+			if (json.total_count != undefined) {
 				onSuccess(json.total_count, countNewIssues(json.issues));
 			} else {
 				onError();
@@ -285,7 +285,7 @@ function scheduleRequest() {
 	var delay = Math.min(randomness * pollIntervalMin * exponent, pollIntervalMax);
 	delay = Math.round(delay);
 
-	if(requestTimeoutHandler != null) {
+	if (requestTimeoutHandler != null) {
 		window.clearTimeout(requestTimeoutHandler);
 	}
 
@@ -293,69 +293,72 @@ function scheduleRequest() {
 }
 
 function getJSON(url, onSuccess, onError) {
-  var xhr = new XMLHttpRequest();
+	var xhr = new XMLHttpRequest();
 
-  var abortTimerId = window.setTimeout(function() {
-    xhr.abort();  // synchronously calls onreadystatechange
-  }, requestTimeout);
+	var abortTimerId = window.setTimeout(function () {
+		xhr.abort();  // synchronously calls onreadystatechange
+	}, requestTimeout);
 
-  function handleSuccess(jsonObj) {
-    requestFailureCount = 0;
-    window.clearTimeout(abortTimerId);
-    if (onSuccess)
-      onSuccess(jsonObj);
-  }
+	function handleSuccess(jsonObj) {
+		requestFailureCount = 0;
+		window.clearTimeout(abortTimerId);
+		if (onSuccess)
+			onSuccess(jsonObj);
+	}
 
-  function handleError() {
-    ++requestFailureCount;
-    window.clearTimeout(abortTimerId);
-    if (onError)
-      onError();
-  }
+	function handleError() {
+		++requestFailureCount;
+		window.clearTimeout(abortTimerId);
+		if (onError)
+			onError();
+	}
 
-  try {
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState != 4)
-            return;
+	try {
+		xhr.onreadystatechange = function () {
+			if (xhr.readyState != 4)
+				return;
 
-        if (xhr.responseText) {
-            var jsonDoc = xhr.responseText;
+			if (xhr.responseText) {
+				var jsonDoc = xhr.responseText;
 
-            if (jsonDoc != undefined && jsonDoc.trim().length > 0) {
-                try {
-                    jsonObj = JSON.parse(jsonDoc);
-                } catch (e) {
-                    handleError();
-                    return;
-                }
+				if (jsonDoc != undefined && jsonDoc.trim().length > 0) {
+					try {
+						jsonObj = JSON.parse(jsonDoc);
+					} catch (e) {
+						handleError();
+						return;
+					}
 
-                if (jsonObj) {
-                    handleSuccess(jsonObj);
-                    return;
-                }
-            }
-        }
+					if (jsonObj) {
+						handleSuccess(jsonObj);
+						return;
+					}
+				}
+			}
 
-        handleError();
-    };
+			handleError();
+		};
 
-    xhr.onerror = function (error) {
-        handleError();
-    };
+		xhr.onerror = function (error) {
+			handleError();
+		};
 
-    xhr.open("GET", getRedmineUrl() + url, true);
+		xhr.open("GET", getRedmineUrl() + url, true);
 
-    //attach authorization credentials if avaiable
-    if(settings.get('userLogin') && settings.get('userPassword')) {
-      var hash = Base64.encode(settings.get('userLogin') + ':' + settings.get('userPassword'));
-      xhr.setRequestHeader('Authorization', "Basic " + hash);
-    }
+		//attach authorization credentials if available
+		if (settings.get('apiKey')) {
+			var apiKeyHash = Base64.encode(settings.get('apiKey') + ':random');
+			xhr.setRequestHeader('Authorization', "Basic " + apiKeyHash);
+		} else if (settings.get('userLogin') && settings.get('userPassword')) {
+			var loginPasswordHash = Base64.encode(settings.get('userLogin') + ':' + settings.get('userPassword'));
+			xhr.setRequestHeader('Authorization', "Basic " + loginPasswordHash);
+		}
 
-    xhr.send(null);
-  } catch(e) {
-    console.error('Exception: ' + e);
-    handleError();
-  }
+		xhr.send(null);
+	} catch (e) {
+		console.error('Exception: ' + e);
+		handleError();
+	}
 }
 
 //call init on window load
