@@ -1,7 +1,7 @@
 {
    "name": "Redmine Issues Checker",
    "description": "Keep track of Redmine issues assigned to you.",
-   "version": "0.62",
+   "version": "0.7",
    "manifest_version": 2,
    "permissions": [ "tabs", "notifications", "<all_urls>" ],
    "icons": {
