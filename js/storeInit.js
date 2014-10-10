@@ -2,6 +2,7 @@
 var settings = new Store("settings", {
 	'redmineUrl': '',
 	'showIssues': 'active',
+	'apiKey':'',
 	'userLogin': '',
 	'userPassword': '',
 	'iconPressUrl': '/my/page',
@@ -18,14 +19,10 @@ var settings = new Store("settings", {
 	'notificationFieldTime': true,
 	'notificationFieldProject': true,
 	'notificationFieldPriority': false,
-	'notificationFieldTracker': false,
-
-	'notificationBgColor': 'white',
-	'notificationTextColor': 'black',
-	'notificationLinkColor': '#961b25'
+	'notificationFieldTracker': false
 });
 
-var oldOptions = ['redmineUrl', 'showIssues', 'userLogin', 'userPassword', 'iconPressUrl', 'iconPressDontRedirect', 'showNotifications', 'notificationsTimeout', 'notificationsType', 'notificationFieldAuthor', 'notificationFieldPriority', 'notificationFieldProject', 'notificationFieldTime', 'notificationFieldTracker', 'notificationLinkColor', 'notificationTextColor', 'notificationBgColor'];
+var oldOptions = ['redmineUrl', 'showIssues', 'userLogin', 'userPassword', 'iconPressUrl', 'iconPressDontRedirect', 'showNotifications', 'notificationsTimeout', 'notificationsType', 'notificationFieldAuthor', 'notificationFieldPriority', 'notificationFieldProject', 'notificationFieldTime', 'notificationFieldTracker'];
 
 //import old options
 for(var idx in oldOptions) {

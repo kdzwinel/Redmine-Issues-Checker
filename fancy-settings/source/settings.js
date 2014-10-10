@@ -184,33 +184,6 @@ window.addEvent("domready", function () {
 		"label": i18n.get("Show issue tracker (eg \"Bug\", \"Feature\")")
 	});
 
-	var notificationBgColor = settings.create({
-		"tab": i18n.get("Notifications"),
-		"group": i18n.get("Extended Notifications Options"),
-		"name": "notificationBgColor",
-		"type": "text",
-		"label": i18n.get("Notification background color:"),
-		"text": "gray or #aacf00 or rgb(200, 100, 50)"
-	});
-
-	var notificationTextColor = settings.create({
-		"tab": i18n.get("Notifications"),
-		"group": i18n.get("Extended Notifications Options"),
-		"name": "notificationTextColor",
-		"type": "text",
-		"label": i18n.get("Notification text color:"),
-		"text": "gray or #aacf00 or rgb(200, 100, 50)"
-	});
-
-	var notificationLinkColor = settings.create({
-		"tab": i18n.get("Notifications"),
-		"group": i18n.get("Extended Notifications Options"),
-		"name": "notificationLinkColor",
-		"type": "text",
-		"label": i18n.get("Notification links color:"),
-		"text": "gray or #aacf00 or rgb(200, 100, 50)"
-	});
-
 	settings.create({
 		"tab": i18n.get("Notifications"),
 		"group": i18n.get("Test"),
