@@ -5,23 +5,23 @@ function testNotification() {
 		subject: 'Test subject: Lorem ipsum dolor sit amet',
 		id: 123,
 		description: 'Test description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris venenatis, magna non elementum faucibus, nisi nibh ultricies arcu, vitae sagittis purus erat eget leo. Donec magna lectus, consectetur vitae molestie at, laoreet id dui. Sed molestie egestas erat, et ullamcorper eros rhoncus sit amet. ',
-		project: {id:123, name:'Test project'},
-		author: {id:123, name:'Test Author'},
-		created_on: now.getFullYear() + '/' + (now.getMonth()+1) + '/' + now.getDate() +' 06:00:00 +0200',
+		project: {id: 123, name: 'Test project'},
+		author: {id: 123, name: 'Test Author'},
+		created_on: now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate() + ' 06:00:00 +0200',
 		tracker: {name: 'Bug'},
 		priority: {name: 'Normal'}
 	};
 
-    NotificationsProxy.create(settings, issue);
+	NotificationsProxy.create(settings, issue);
 }
 
 var reloadTimeout;
 function reloadBackground() {
-	if(reloadTimeout) {
+	if (reloadTimeout) {
 		window.clearTimeout(reloadTimeout);
 	}
 	//to prevent reloading after each key stroke
-	reloadTimeout = window.setTimeout(function(){
+	reloadTimeout = window.setTimeout(function () {
 		chrome.extension.getBackgroundPage().init();
 	}, 1000);
 }
@@ -84,9 +84,9 @@ window.addEvent("domready", function () {
 		"type": "radioButtons",
 		"label": i18n.get("Show number of issues:"),
 		"options": [
-		    ["active", i18n.get("active")],
-		    ["new", i18n.get("new")],
-		    ["active-new", i18n.get("new and active (eg \"2:10\")")]
+			["active", i18n.get("active")],
+			["new", i18n.get("new")],
+			["active-new", i18n.get("new and active (eg \"2:10\")")]
 		],
 		"afterSave": reloadBackground
 	});
@@ -128,9 +128,9 @@ window.addEvent("domready", function () {
 		"step": 5000,
 		"display": true,
 		"displayModifier": function (value) {
-		    return (value / 1000).floor() + " sec";
+			return (value / 1000).floor() + " sec";
 		}
-        });
+	});
 
 	var notificationsType = settings.create({
 		"tab": i18n.get("Notifications"),
@@ -139,8 +139,8 @@ window.addEvent("domready", function () {
 		"type": "radioButtons",
 		"label": i18n.get("Notifications to use:"),
 		"options": [
-		    ["standard", i18n.get("standard (default Chrome notifications)")],
-		    ["extended", i18n.get("extended (styled notifications with clickable links and more options)")]
+			["standard", i18n.get("standard (default Chrome notifications)")],
+			["extended", i18n.get("extended (styled notifications with clickable links and more options)")]
 		]
 	});
 
@@ -241,9 +241,9 @@ window.addEvent("domready", function () {
 		"step": 10000,
 		"display": true,
 		"displayModifier": function (value) {
-		    return (value / 1000).floor() + " sec";
+			return (value / 1000).floor() + " sec";
 		}
-    });
+	});
 
 	//ABOUT
 	settings.create({
@@ -282,6 +282,6 @@ window.addEvent("domready", function () {
 		"text": "<a href='https://github.com/Regul777'>Dima Yakovenko</a> - custom request URL, custom update delay"
 	});
 
-    document.getElementById('testNotificationBtn').onclick = testNotification;
+	document.getElementById('testNotificationBtn').onclick = testNotification;
 });
 

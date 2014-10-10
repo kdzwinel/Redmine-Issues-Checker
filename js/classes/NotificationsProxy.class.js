@@ -41,31 +41,31 @@ var NotificationsProxy = (function () {
         if (settings.get('notificationsType') == 'extended') {
             var items = [];
             if (settings.get('notificationFieldAuthor')) {
-                items.append({
+                items.push({
                     title: 'Author',
                     message: issue.author.name
                 });
             }
             if (settings.get('notificationFieldTime')) {
-                items.append({
+                items.push({
                     title: 'Created',
                     message: formatTime(issue.created_on)
                 });
             }
             if (settings.get('notificationFieldProject')) {
-                items.append({
+                items.push({
                     title: 'Project Name',
                     message: issue.project.name
                 });
             }
             if (settings.get('notificationFieldPriority')) {
-                items.append({
+                items.push({
                     title: 'Priority',
                     message: issue.priority.name
                 });
             }
             if (settings.get('notificationFieldTracker')) {
-                items.append({
+                items.push({
                     title: 'Tracker',
                     message: issue.tracker.name
                 });
@@ -74,7 +74,7 @@ var NotificationsProxy = (function () {
             opt = {
                 type: "list",
                 title: '"' + issue.subject + '" by ' + issue.author.name,
-                message: "Primary message to display",
+                message: issue.description,
                 iconUrl: "/img/redmine_logo_128.png",
                 items: items
             }
@@ -88,35 +88,8 @@ var NotificationsProxy = (function () {
         });
     }
 
-    function createWebNotification(settings, issue) {
-        var notification;
-
-        if (settings.get('notificationsType') == 'extended' && webkitNotifications.createHTMLNotification) {
-            notification = webkitNotifications.createHTMLNotification(
-                '/notification.html'
-            );
-
-            chrome.extension.getBackgroundPage().setNewIssue(issue);
-        } else {
-            notification = webkitNotifications.createNotification(
-                '/img/redmine_logo_128.png',  // icon url - can be relative
-                '"' + issue.subject + '" by ' + issue.author.name,  // notification title
-                issue.description  // notification body text
-            );
-        }
-
-        notification.show();
-
-        window.setTimeout(function () {
-            notification.cancel();
-        }, settings.get('notificationsTimeout'));
-    }
-
     function create(settings, issue) {
-        if (webkitNotifications && webkitNotifications.createHTMLNotification) {
-            //use web notifications API
-            createWebNotification(settings, issue);
-        } else if (chrome.notifications) {
+        if (chrome.notifications) {
             //use new Notifications API (https://developer.chrome.com/extensions/notifications.html)
             createNotification(settings, issue);
         }
