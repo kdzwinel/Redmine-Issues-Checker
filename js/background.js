@@ -171,7 +171,7 @@ function showLoggedOut() {
 	issuesNewCount = -1;
 
 	chrome.browserAction.setIcon({path: redmineUrlIsPlanio() ? "img/planio_not_logged_in.png" : "img/redmine_not_logged_in.png"});
-	chrome.browserAction.setBadgeBackgroundColor({color: redmineUrlIsPlanio() ? BADGE_COLOR_INACTIVE : PLANIO_BADGE_COLOR_INACTIVE});
+	chrome.browserAction.setBadgeBackgroundColor({color: redmineUrlIsPlanio() ? PLANIO_BADGE_COLOR_INACTIVE : BADGE_COLOR_INACTIVE});
 	chrome.browserAction.setBadgeText({text: "?"});
 	chrome.browserAction.setTitle({'title': 'disconnected'});
 }
