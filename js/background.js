@@ -1,6 +1,8 @@
 var iconAnimation;
 var BADGE_COLOR_INACTIVE = [190, 190, 190, 230];
 var BADGE_COLOR_ACTIVE = [208, 0, 24, 255];
+var PLANIO_BADGE_COLOR_INACTIVE = [255, 255, 255, 50];
+var PLANIO_BADGE_COLOR_ACTIVE = [87, 165, 189, 255];
 
 //REQUEST VARIABLES
 var requestFailureCount = 0;  // used for exponential backoff
@@ -26,16 +28,20 @@ function init() {
 		iconAnimation = new IconAnimation({
 			canvasObj: document.getElementById('canvas'),
 			imageObj: document.getElementById('image'),
-			defaultIcon: "img/redmine_logged_in.png"
+			defaultIcon: redmineUrlIsPlanio() ? "img/planio_logged_in.png" : "img/redmine_logged_in.png"
 		});
 	} else {
 		iconAnimation.reset();
 	}
 
-	chrome.browserAction.setBadgeBackgroundColor({color: BADGE_COLOR_ACTIVE});
+	chrome.browserAction.setBadgeBackgroundColor({color: redmineUrlIsPlanio() ? PLANIO_BADGE_COLOR_ACTIVE : BADGE_COLOR_ACTIVE});
 	iconAnimation.startLoading();
 
 	startRequest();
+}
+
+function redmineUrlIsPlanio() {
+  return getRedmineUrl().match(/^https:\/\/\w+\.plan\.io\//);
 }
 
 function getRedmineUrl() {
@@ -121,7 +127,7 @@ function updateIssuesCount(allCount, newCount) {
 	issuesCount = allCount;
 	issuesNewCount = newCount;
 
-	chrome.browserAction.setBadgeBackgroundColor({color: BADGE_COLOR_ACTIVE});
+	chrome.browserAction.setBadgeBackgroundColor({color: redmineUrlIsPlanio() ? PLANIO_BADGE_COLOR_ACTIVE : BADGE_COLOR_ACTIVE});
 	chrome.browserAction.setBadgeText({
 		text: printIssuesCount()
 	});
@@ -164,8 +170,8 @@ function showLoggedOut() {
 	issuesCount = -1;
 	issuesNewCount = -1;
 
-	chrome.browserAction.setIcon({path: "img/redmine_not_logged_in.png"});
-	chrome.browserAction.setBadgeBackgroundColor({color: BADGE_COLOR_INACTIVE});
+	chrome.browserAction.setIcon({path: redmineUrlIsPlanio() ? "img/planio_not_logged_in.png" : "img/redmine_not_logged_in.png"});
+	chrome.browserAction.setBadgeBackgroundColor({color: redmineUrlIsPlanio() ? BADGE_COLOR_INACTIVE : PLANIO_BADGE_COLOR_INACTIVE});
 	chrome.browserAction.setBadgeText({text: "?"});
 	chrome.browserAction.setTitle({'title': 'disconnected'});
 }
@@ -186,7 +192,7 @@ function showNotificationOnNewIssue(issuesObj) {
 			//issue.created_on
 			//issue.updated_on
 
-			NotificationsProxy.create(settings, issue);
+			NotificationsProxy.create(settings, issue, redmineUrlIsPlanio() ? "/img/planio_logo_128.png" : "/img/redmine_logo_128.png");
 		}
 	}
 

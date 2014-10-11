@@ -30,12 +30,15 @@ var NotificationsProxy = (function () {
         }
     }
 
-    function createNotification(settings, issue) {
+    function createNotification(settings, issue, iconUrl) {
+
+        iconUrl = (typeof iconUrl === "undefined") ? "/img/redmine_logo_128.png" : iconUrl;
+
         var opt = {
             type: "basic",
             title: '"' + issue.subject + '" by ' + issue.author.name,
             message: issue.description,
-            iconUrl: "/img/redmine_logo_128.png"
+            iconUrl: iconUrl
         };
 
         if (settings.get('notificationsType') == 'extended') {
@@ -75,7 +78,7 @@ var NotificationsProxy = (function () {
                 type: "list",
                 title: '"' + issue.subject + '" by ' + issue.author.name,
                 message: issue.description,
-                iconUrl: "/img/redmine_logo_128.png",
+                iconUrl: iconUrl,
                 items: items
             }
         }
@@ -88,10 +91,10 @@ var NotificationsProxy = (function () {
         });
     }
 
-    function create(settings, issue) {
+    function create(settings, issue, iconUrl) {
         if (chrome.notifications) {
             //use new Notifications API (https://developer.chrome.com/extensions/notifications.html)
-            createNotification(settings, issue);
+            createNotification(settings, issue, iconUrl);
         }
     }
 
