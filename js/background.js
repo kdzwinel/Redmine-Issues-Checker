@@ -333,17 +333,34 @@ function getJSON(url, onSuccess, onError) {
 			handleError();
 		};
 
-		xhr.open("GET", getRedmineUrl() + url, true);
+		var targetUrl = getRedmineUrl() + url;
+		
+		
+		
+		
 
 		//attach authorization credentials if available
 		if (settings.get('apiKey')) {
-			var apiKeyHash = Base64.encode(settings.get('apiKey') + ':random');
-			xhr.setRequestHeader('Authorization', "Basic " + apiKeyHash);
+			//in some implementation base auth is not working
+			if (settings.get('apiKeyModeHttpBasic')) {
+				console.log('use basic auth');
+				var apiKeyHash = Base64.encode(settings.get('apiKey') + ':random');
+				xhr.setRequestHeader('Authorization', "Basic " + apiKeyHash);
+			}else{
+				console.log('use key');
+				if(targetUrl.indexOf("?") > -1){
+					targetUrl = targetUrl +"&key="+settings.get('apiKey');
+				}else{
+					targetUrl = targetUrl +"?key="+settings.get('apiKey');	
+				}
+			}
 		} else if (settings.get('userLogin') && settings.get('userPassword')) {
 			var loginPasswordHash = Base64.encode(settings.get('userLogin') + ':' + settings.get('userPassword'));
 			xhr.setRequestHeader('Authorization', "Basic " + loginPasswordHash);
 		}
-
+		
+		//console.log("get url:"+targetUrl);
+		xhr.open("GET", targetUrl , true);
 		xhr.send(null);
 	} catch (e) {
 		console.error('Exception: ' + e);
