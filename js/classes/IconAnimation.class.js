@@ -17,7 +17,7 @@ function IconAnimation(config) {
 		image.src = icon;
 		chrome.browserAction.setIcon({path: icon});
 		setTimeout(animateFlip, 1500);
-	}
+	};
 
 	this.startLoading = function () {
 		if (loadingTimer) {
@@ -25,7 +25,7 @@ function IconAnimation(config) {
 		}
 
 		loadingTimer = setInterval(drawIconAtLoading, 100);
-	}
+	};
 
 	this.stopLoading = function () {
 		if (!loadingTimer) {
@@ -35,13 +35,13 @@ function IconAnimation(config) {
 		clearInterval(loadingTimer);
 		loadingTimer = 0;
 		chrome.browserAction.setBadgeText({text:""});
-	}
+	};
 	
 	this.reset = function () {
 		this.stopLoading();
 		clearInterval(animateFlip);
 		chrome.browserAction.setIcon({path: defaultIcon});
-	}
+	};
 
 	var drawIconAtLoading = function() {
 		var text = "";
@@ -57,11 +57,11 @@ function IconAnimation(config) {
 		if (loadingCurrentState == loadingStatesCount) {
 			loadingCurrentState = 0;
 		}
-	}
+	};
 
 	var ease = function(x) {
 		return (1-Math.sin(Math.PI/2+x*Math.PI))/2;
-	}
+	};
 
 	var animateFlip = function () {
 		rotation += 1/animationFrames;
@@ -73,7 +73,7 @@ function IconAnimation(config) {
 			drawIconAtRotation();
 			chrome.browserAction.setIcon({path: defaultIcon});
 		}
-	}
+	};
 
 	var drawIconAtRotation = function () {
 		canvasContext.save();
@@ -88,7 +88,7 @@ function IconAnimation(config) {
 		canvasContext.restore();
 
 		chrome.browserAction.setIcon({imageData:canvasContext.getImageData(0, 0, canvas.width,canvas.height)});
-	}
+	};
 
 	canvasContext = canvas.getContext('2d');
 
