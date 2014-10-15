@@ -51,6 +51,15 @@ window.addEvent("domready", function () {
 	var apiKey = settings.create({
 		"tab": i18n.get("General"),
 		"group": i18n.get("Authentication"),
+		"name": "apiKeyModeHttpBasic",
+		"type": "checkbox",
+		"label": i18n.get("API key mode http basic:"),
+		"afterSave": reloadBackground
+	});
+	
+	var apiKey = settings.create({
+		"tab": i18n.get("General"),
+		"group": i18n.get("Authentication"),
 		"name": "apiKey",
 		"type": "text",
 		"label": i18n.get("API key:"),
