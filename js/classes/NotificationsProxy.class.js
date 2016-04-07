@@ -85,6 +85,19 @@ var NotificationsProxy = (function () {
 
         chrome.notifications.create(Math.random().toString(), opt, function (nid) {
             console.log('Notification ID: ' + nid);
+            if(!chrome.notifications.onClicked.hasListeners()){
+				chrome.notifications.onClicked.addListener(function(notificationId, byUser) {
+					console.log("Notification ID",notificationId);
+					var settings = new Store("settings");
+					var apiKey = settings.get("apiKey");
+					var spitIssueCode = notificationId.split("-")[1]
+					if(apiKey != "" && apiKey !== undefined){
+                        var redmineUrl =  settings.get("redmineUrl");
+                        redmineUrl = redmineUrl + (redmineUrl.substr(-1)!=="/"?"/":"");
+						chrome.tabs.create({url: redmineUrl+"issues/"+spitIssueCode+"?key="+settings.get("apiKey")},function(){});
+					}
+				});
+			}
             window.setTimeout(function () {
                 chrome.notifications.clear(nid, function(){});
             }, settings.get('notificationsTimeout'));
