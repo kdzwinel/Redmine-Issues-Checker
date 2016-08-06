@@ -337,10 +337,10 @@ function getJSON(url, onSuccess, onError) {
 
 		//attach authorization credentials if available
 		if (settings.get('apiKey')) {
-			var apiKeyHash = Base64.encode(settings.get('apiKey') + ':random');
+			var apiKeyHash = window.btoa(settings.get('apiKey') + ':random');
 			xhr.setRequestHeader('Authorization', "Basic " + apiKeyHash);
 		} else if (settings.get('userLogin') && settings.get('userPassword')) {
-			var loginPasswordHash = Base64.encode(settings.get('userLogin') + ':' + settings.get('userPassword'));
+			var loginPasswordHash = window.btoa(settings.get('userLogin') + ':' + settings.get('userPassword'));
 			xhr.setRequestHeader('Authorization', "Basic " + loginPasswordHash);
 		}
 
